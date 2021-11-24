@@ -76,7 +76,7 @@ describe("Bundle Module (aka Collection Module)", async () => {
     }
   });
 
-  it("updates the bps in both the metadata and on-chain", async () => {
+  it.skip("updates the bps in both the metadata and on-chain", async () => {
     /**
      * Tries to update the bps in the metadata and on-chain
      * 
@@ -104,7 +104,7 @@ describe("Bundle Module (aka Collection Module)", async () => {
     }
   });
 
-  it("updates the royalty recipient in the metadata and (~todo: on chain)", async () => {
+  it.skip("updates the royalty recipient in the metadata and (~odo: on chain)", async () => {
     /**
      * The token with id 1 has been burned and can never be recovered,
      * so it serves as a good test case.
