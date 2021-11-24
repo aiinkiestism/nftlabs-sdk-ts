@@ -78,8 +78,8 @@ describe("Bundle Module (aka Collection Module)", async () => {
 
   it("updates the bps in both the metadata and on-chain", async () => {
     /**
-     * The token with id 1 has been burned and can never be recovered,
-     * so it serves as a good test case.
+     * Tries to update the bps in the metadata and on-chain
+     * 
      */
     try {
       const testBPS = 100;
@@ -98,6 +98,33 @@ describe("Bundle Module (aka Collection Module)", async () => {
         await module.getRoyaltyBps(),
         testBPS,
         "Fetching the BPS with the tx should return 100",
+      );
+    } catch (err) {
+      chai.assert.fail(err);
+    }
+  });
+
+  it("updates the royalty recipient in the metadata and (~todo: on chain)", async () => {
+    /**
+     * The token with id 1 has been burned and can never be recovered,
+     * so it serves as a good test case.
+     */
+    try {
+      const testRecipient = "0xE79ee09bD47F4F5381dbbACaCff2040f2FbC5803";
+      const module = sdk.getBundleModule(
+        "0x54ec360704b2e9E4e6499a732b78094D6d78e37B",
+      );
+      await module.setRoyaltyRecipient(testRecipient);
+      const { metadata } = await module.getMetadata();
+      chai.assert.equal(
+        metadata.fee_recipient,
+        testRecipient,
+        `Fetching the BPS from the metadata should return ${testRecipient}`,
+      );
+      chai.assert.equal(
+        await module.getRoyaltyRecipientAddress(),
+        testRecipient,
+        `Fetching the BPS with the tx should return ${testRecipient}`,
       );
     } catch (err) {
       chai.assert.fail(err);

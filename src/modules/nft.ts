@@ -219,6 +219,27 @@ export class NFTModule extends ModuleWithRoles<NFT> {
     return await this.sendTransaction("multicall", [encoded]);
   }
 
+  public async setRoyaltyRecipient(address: string): Promise<TransactionReceipt> {
+    const { metadata } = await this.getMetadata();
+    const encoded: string[] = [];
+    if (!metadata) {
+      throw new Error("No metadata found, this module might be invalid!");
+    }
+
+    metadata.fee_recipient = address;
+    const uri = await uploadMetadata(
+      {
+        ...metadata,
+      },
+      this.address,
+      await this.getSignerAddress(),
+    );
+      // ~TODO: where is the fee recipient set other than the metadata?
+    encoded.push(
+      this.contract.interface.encodeFunctionData("setContractURI", [uri]),
+    );
+    return await this.sendTransaction("multicall", [encoded]);
+  }
   public async setModuleMetadata(
     metadata: MetadataURIOrObject,
   ): Promise<TransactionReceipt> {
@@ -238,12 +259,12 @@ export class NFTModule extends ModuleWithRoles<NFT> {
   /**
    * Gets the address of the royalty recipient
    *
-   * @returns - The royalty BPS
+   * @returns - The royalty recipient address
    */
-  public async getRoyaltyRecipientAddress(): Promise<string> {
-    const metadata = await this.getMetadata();
-    if (metadata.metadata?.fee_recipient !== undefined) {
-      return metadata.metadata.fee_recipient;
+   public async getRoyaltyRecipientAddress(): Promise<string> {
+    const { metadata } = await this.getMetadata();
+    if (metadata?.fee_recipient !== undefined) {
+      return metadata.fee_recipient;
     }
     return "";
   }
